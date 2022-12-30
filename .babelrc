@@ -1,0 +1,26 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "browsers": ["last 2 versions", "safari >= 7", "Android >= 4"]
+        }
+      }
+    ]
+  ],
+  "plugins": [
+    "@babel/plugin-proposal-optional-chaining",
+    "@babel/plugin-transform-runtime",
+
+    ["module-resolver", {
+      "alias": {
+        "@sdk": "./src/sdk",
+        "@data": "./src/data",
+        "@utils": "./src/utils",
+        "@validator": "./src/validator",
+        "@model": "./src/model"
+      }
+    }]
+  ]
+}
