@@ -1,67 +1,46 @@
-import resolve from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-commonjs";
-import babel from "rollup-plugin-babel";
-import pkg from "./package.json";
-import { terser } from "rollup-plugin-terser";
-import replace from "@rollup/plugin-replace";
-import json from "@rollup/plugin-json";
+const resolve = require('@rollup/plugin-node-resolve');
+const commonjs = require('@rollup/plugin-commonjs');
+const peerDepsExternal = require('rollup-plugin-peer-deps-external');
+const terser = require('@rollup/plugin-terser');
+const json = require('@rollup/plugin-json');
+const typescript = require('@rollup/plugin-typescript');
+const postcss = require('rollup-plugin-postcss');
+const packageJson = require('./package.json');
+const sizes = require('rollup-plugin-sizes');
+const filesize = require('rollup-plugin-filesize');
+const dts = require('rollup-plugin-dts');
 
-const defineGlobal = {
-  ENV: process.env?.NODE_ENV,
-};
-
-export default [
-  // browser-friendly UMD build
+module.exports = [
   {
-    input: "src/index.js",
-    output: {
-      name: "jkos",
-      file: pkg.browser,
-      format: "umd",
-    },
+    input: 'src/index.ts',
+    output: [
+      {
+        file: packageJson.main,
+        format: 'cjs',
+        sourcemap: true,
+      },
+      {
+        file: packageJson.module,
+        format: 'esm',
+        sourcemap: true,
+      },
+    ],
     plugins: [
+      peerDepsExternal(),
       resolve(),
-      babel({
-        exclude: "node_modules/**",
-        runtimeHelpers: true,
-      }),
-      // replace(defineGlobal.format()),
-      replace({
-        preventAssignment: true,
-        JK: JSON.stringify(defineGlobal),
-      }),
       commonjs(),
+      typescript({ tsconfig: './tsconfig.json' }),
+      postcss(),
       json(),
       terser(),
+      sizes(),
+      filesize(),
     ],
   },
-
-  // CommonJS (for Node) and ES module (for bundlers) build.
-  // (We could have three entries in the configuration array
-  // instead of two, but it's quicker to generate multiple
-  // builds from a single configuration where possible, using
-  // an array for the `output` option, where we can specify
-  // `file` and `format` for each target)
   {
-    input: "src/index.js",
-    // external: ["ms"],
-    output: [
-      { file: pkg.main, format: "cjs" },
-      { file: pkg.module, format: "es" },
-    ],
-    plugins: [
-      resolve(),
-      babel({
-        exclude: "node_modules/**",
-        runtimeHelpers: true,
-      }),
-      replace({
-        preventAssignment: true,
-        JK: JSON.stringify(defineGlobal),
-      }),
-      commonjs(),
-      json(),
-      terser(),
-    ],
+    input: 'dist/esm/types/index.d.ts',
+    output: [{ file: 'dist/index.d.ts', format: 'es' }],
+    plugins: [dts.default()],
+    external: [/\.css$/],
   },
 ];
