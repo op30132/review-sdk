@@ -27,11 +27,6 @@
     "typeRoots": ["./node_modules/@types/", "./typings/**/*"]
   },
   "importHelpers": true,
-  "include": [
-    "src/**/*.tsx",
-    "**/*.ts",
-    "typings/**/*.d.ts",
-    "postcss.config.js"
-  ],
+  "include": ["src/**/*.tsx", "**/*.ts", "typings/**/*.d.ts"],
   "exclude": ["node_modules", "test/**/*.ts", "build"]
 }
