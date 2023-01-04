@@ -19,7 +19,8 @@
       "@hooks/*": ["./src/hooks/*"],
       "@component/*": ["./src/component/*"],
       "@sdk/*": ["./src/sdk/*"],
-      "@utils/*": ["./src/utils/*"]
+      "@utils/*": ["./src/utils/*"],
+      "@model/*": ["./src/model/*"]
     },
     "declaration": true,
     "declarationDir": "types",
@@ -28,5 +29,5 @@
   },
   "importHelpers": true,
   "include": ["src/**/*.tsx", "**/*.ts", "typings/**/*.d.ts"],
-  "exclude": ["node_modules", "test/**/*.ts", "build"]
+  "exclude": ["node_modules", "test/**/*.ts", "dist"]
 }

@@ -1,5 +1,8 @@
 import approveReview from './approveReview';
 import createReview from './createReview';
 import getReviewList from './getReviewList';
+import SmartReview from './review-sdk';
 
-export default { approveReview, createReview, getReviewList };
+export { approveReview, createReview, getReviewList };
+
+export default SmartReview;

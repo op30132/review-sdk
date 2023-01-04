@@ -1,4 +1,4 @@
-import Review from './component/Review';
+import { WebReview } from './component';
 import sdk from './sdk';
 
-export { Review, sdk };
+export { WebReview, sdk as default };

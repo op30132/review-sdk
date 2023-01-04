@@ -1,46 +1,113 @@
-const resolve = require('@rollup/plugin-node-resolve');
-const commonjs = require('@rollup/plugin-commonjs');
-const peerDepsExternal = require('rollup-plugin-peer-deps-external');
-const terser = require('@rollup/plugin-terser');
-const json = require('@rollup/plugin-json');
-const typescript = require('@rollup/plugin-typescript');
-const postcss = require('rollup-plugin-postcss');
-const packageJson = require('./package.json');
-const sizes = require('rollup-plugin-sizes');
-const filesize = require('rollup-plugin-filesize');
-const dts = require('rollup-plugin-dts');
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import terser from '@rollup/plugin-terser';
+import typescript from '@rollup/plugin-typescript';
+import postcss from 'rollup-plugin-postcss';
+import sizes from 'rollup-plugin-sizes';
+import filesize from 'rollup-plugin-filesize';
+import dts from 'rollup-plugin-dts';
+import dev from 'rollup-plugin-dev';
+import livereload from 'rollup-plugin-livereload';
+import replace from '@rollup/plugin-replace';
 
-module.exports = [
+const packageJson = require('./package.json');
+
+const EXPORT_NAME = 'review-sdk';
+const isProduction = process.env.NODE_ENV === 'production';
+const defaultDevPort = 3000;
+const serverPort = process.env.DEV_PORT || defaultDevPort;
+
+const getPlugins = (shouldMinify) => {
+  return [
+    resolve({
+      browser: true,
+    }),
+    commonjs(),
+    typescript({
+      tsconfig: './tsconfig.json',
+    }),
+    postcss(),
+    replace({
+      'process.env.NODE_ENV': `'${process.env.NODE_ENV}'`,
+      preventAssignment: false,
+    }),
+    shouldMinify
+      ? terser()
+      : terser({
+          compress: false,
+          mangle: false,
+          format: { beautify: true },
+        }),
+    shouldMinify && sizes(),
+    shouldMinify && filesize(),
+  ];
+};
+
+let bundles = [
   {
     input: 'src/index.ts',
-    output: [
-      {
-        file: packageJson.main,
-        format: 'cjs',
-        sourcemap: true,
-      },
-      {
-        file: packageJson.module,
-        format: 'esm',
-        sourcemap: true,
-      },
-    ],
+    output: {
+      name: EXPORT_NAME,
+      file: 'dist/review-sdk.development.js',
+      format: 'umd',
+      sourcemap: true,
+    },
     plugins: [
-      peerDepsExternal(),
-      resolve(),
-      commonjs(),
-      typescript({ tsconfig: './tsconfig.json' }),
-      postcss(),
-      json(),
-      terser(),
-      sizes(),
-      filesize(),
+      ...getPlugins(false),
+      !isProduction &&
+        dev({
+          dirs: ['dist', 'static'],
+          port: serverPort,
+        }),
+      !isProduction && livereload(),
     ],
-  },
-  {
-    input: 'dist/esm/types/index.d.ts',
-    output: [{ file: 'dist/index.d.ts', format: 'es' }],
-    plugins: [dts.default()],
-    external: [/\.css$/],
+    watch: {
+      clearScreen: false,
+    },
   },
 ];
+
+if (isProduction) {
+  bundles = bundles.concat(
+    {
+      input: 'src/index.ts',
+      output: [
+        {
+          name: EXPORT_NAME,
+          file: 'dist/review-sdk.production.js',
+          format: 'umd',
+        },
+      ],
+      plugins: [...getPlugins(isProduction)],
+    },
+    {
+      input: 'src/index.ts',
+      output: [
+        {
+          file: packageJson.module,
+          format: 'esm',
+        },
+      ],
+      plugins: getPlugins(isProduction),
+    },
+    {
+      input: 'src/index.ts',
+      output: [
+        {
+          name: EXPORT_NAME,
+          file: packageJson.main,
+          format: 'cjs',
+        },
+      ],
+      plugins: getPlugins(false),
+    },
+    {
+      input: 'dist/esm/types/index.d.ts',
+      output: [{ file: 'dist/index.d.ts', format: 'es' }],
+      plugins: [dts.default()],
+      external: [/\.css$/],
+    },
+  );
+}
+
+export default bundles;
