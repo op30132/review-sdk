@@ -1,10 +1,12 @@
-import env from "@utils/env";
-import CryptoJS from "crypto-js";
+import CryptoJS from 'crypto-js';
 
-const getSign = (body) => {
-  const secretKey = env("REVIEW_SECRET_KEY");
+const getSign = (body: any, secretKey: string) => {
   const jsonBody = JSON.stringify(body);
-  const timestamp = new Date().toLocaleDateString().split("/").join("");
+  const timestamp = new Date()
+    .toISOString()
+    .substring(0, 10)
+    .split('-')
+    .join('');
 
   const finalSignString =
     secretKey.toString() + jsonBody.toString() + timestamp.toString();

@@ -3,7 +3,6 @@
  */
 
 import { Api } from '@jk/api';
-import getHeaders from '@utils/getHeaders';
 
 /**
  * @description

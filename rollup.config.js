@@ -9,6 +9,7 @@ import dts from 'rollup-plugin-dts';
 import dev from 'rollup-plugin-dev';
 import livereload from 'rollup-plugin-livereload';
 import replace from '@rollup/plugin-replace';
+import copy from 'rollup-plugin-copy';
 
 const packageJson = require('./package.json');
 
@@ -60,6 +61,12 @@ let bundles = [
           port: serverPort,
         }),
       !isProduction && livereload(),
+      !isProduction &&
+        copy({
+          targets: [
+            { src: 'dist/review-sdk.development.js', dest: 'src/static' },
+          ],
+        }),
     ],
     watch: {
       clearScreen: false,
