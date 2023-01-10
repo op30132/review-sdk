@@ -7,8 +7,8 @@ import ReactFlow, {
   NodeChange,
   EdgeChange,
   Controls,
-  Background,
   Position,
+  useReactFlow,
 } from 'reactflow';
 import dagre from 'dagre';
 import '../../node_modules/reactflow/dist/style.css';
@@ -16,10 +16,20 @@ import '../../node_modules/reactflow/dist/style.css';
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-const nodeWidth = 150;
+const nodeWidth = 200;
 const nodeHeight = 200;
 
-function Graph({ nodes, edges }) {
+function Graph({
+  nodes,
+  edges,
+  isShowCycleEdge = true,
+  isSelectable = true,
+  isDraggable = true,
+  onNodeClick,
+  onNodeDragStart,
+  onNodeDragStop,
+}) {
+  const reactFlowInstance = useReactFlow();
   const [layoutedNodes, setLayoutedNodes] = useState<Node[]>([]);
   const [layoutedEdges, setLayoutedEdges] = useState<Edge[]>([]);
 
@@ -35,14 +45,32 @@ function Graph({ nodes, edges }) {
   );
 
   const getLayoutedElements = (nodes: Node[], edges: Edge[]) => {
-    dagreGraph.setGraph({ rankdir: 'LR' });
+    let finalEdges = edges;
+    dagreGraph.setGraph({
+      rankdir: 'LR',
+      align: 'UL',
+    });
     nodes.forEach((node) => {
       dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
     });
     edges.forEach((edge) => {
       dagreGraph.setEdge(edge.source, edge.target);
     });
-
+    if (!isShowCycleEdge) {
+      const cycleList = dagre.graphlib.alg.findCycles(dagreGraph);
+      for (let i = 0; i < cycleList.length; i++) {
+        const cycle = cycleList[i];
+        const begin = cycle[cycle.length - 1];
+        for (let j = 0; j < cycle.length - 1; j++) {
+          if (dagreGraph.hasEdge(cycle[j], begin)) {
+            dagreGraph.removeEdge(cycle[j], begin);
+            finalEdges = finalEdges.filter((edge) => {
+              return !(edge.source === cycle[j] && edge.target === begin);
+            });
+          }
+        }
+      }
+    }
     dagre.layout(dagreGraph);
     nodes.forEach((node) => {
       const nodeWithPosition = dagreGraph.node(node.id);
@@ -56,7 +84,7 @@ function Graph({ nodes, edges }) {
       return node;
     });
 
-    return { nodes, edges };
+    return { nodes, edges: finalEdges };
   };
 
   useEffect(() => {
@@ -69,16 +97,23 @@ function Graph({ nodes, edges }) {
     if (!layoutedEdges.length) return;
   }, [layoutedEdges]);
 
-  const style = { height: '350px', width: '100%' };
+  const style = { height: 350, width: '100%' };
 
   return (
     <div style={style}>
       <ReactFlow
         fitView
+        attributionPosition="top-right"
         nodes={layoutedNodes}
         onNodesChange={onNodesChange}
         edges={layoutedEdges}
         onEdgesChange={onEdgesChange}
+        defaultNodes={[]}
+        elementsSelectable={isSelectable}
+        nodesDraggable={isDraggable}
+        onNodeClick={isSelectable ? onNodeClick : undefined}
+        onNodeDragStart={isDraggable ? onNodeDragStart : undefined}
+        onNodeDragStop={isDraggable ? onNodeDragStop : undefined}
       >
         <Controls />
       </ReactFlow>

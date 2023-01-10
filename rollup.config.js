@@ -63,9 +63,7 @@ let bundles = [
       !isProduction && livereload(),
       !isProduction &&
         copy({
-          targets: [
-            { src: 'dist/review-sdk.development.js', dest: 'src/static' },
-          ],
+          targets: [{ src: 'dist/review-sdk.development.js', dest: 'static' }],
         }),
     ],
     watch: {

@@ -36,6 +36,31 @@
   <body>
     <div id="root"></div>
     <script type="text/babel" data-presets="es2015,react">
+      function ReviewModal({ reviewid, secretkey, token }) {
+        const { useState, useEffect } = React;
+        const [review, setReview] = useState(null);
+        const [loading, setLoading] = useState(true);
+        const [error, setError] = useState(null);
+
+        useEffect(() => {
+          const review = new ReviewSDK({
+            reviewId: reviewid,
+            secretKey: secretkey,
+            token: token,
+          });
+          review
+            .getReview()
+            .then((review) => {
+              setReview(review);
+              setLoading(false);
+            })
+            .catch((error) => {
+              setError(error);
+              setLoading(false);
+            });
+        }, []);
+        return <div></div>;
+      }
       function MyApp() {
         const { useState } = React;
         const [type, setType] = useState('review');
@@ -43,14 +68,21 @@
         const [transitions, setTransitions] = useState('');
         const [secretkey, setSecretkey] = useState('');
         const [token, setToken] = useState('');
+        const [isRenderModal, setRenderModal] = useState(false);
+        const [showcycleedge, setShowcycleedge] = useState('false');
+
         const handleOnSubmit = (e) => {
           e.preventDefault();
           if (e.target.reviewid) setReviewid(e.target.reviewid.value);
           if (e.target.secretkey) setSecretkey(e.target.secretkey.value);
           if (e.target.token) setToken(e.target.token.value);
-          if (e.target.transitions) setTransitions(e.target.transitions.value);
+          if (e.target.transitions) {
+            setTransitions(e.target.transitions.value);
+          }
+          if (e.target.showcycleedge) {
+            setShowcycleedge(JSON.stringify(e.target.showcycleedge.checked));
+          }
         };
-
         return (
           <div className="container">
             <h2>REVIEW-SDK</h2>
@@ -77,6 +109,15 @@
             <form onSubmit={handleOnSubmit}>
               {type == 'review' && (
                 <React.Fragment>
+                  <div className="input-group mb-3">
+                    <input
+                      type="checkbox"
+                      name="showcycleedge"
+                      id="showcycleedge"
+                      className="mr-2 mb-1"
+                    />
+                    <label for="showcycleedge"> 顯示 cycle-edge</label>
+                  </div>
                   請輸入 secret key
                   <div className="input-group mb-3">
                     <input
@@ -111,6 +152,15 @@
               )}
               {type == 'workflow' && (
                 <React.Fragment>
+                  <div className="input-group mb-3">
+                    <input
+                      type="checkbox"
+                      name="showcycleedge"
+                      id="showcycleedge"
+                      className="mr-2 mb-1"
+                    />
+                    <label for="showcycleedge"> 顯示 cycle-edge</label>
+                  </div>
                   請輸入 transitions
                   <div className="input-group mb-3">
                     <textarea
@@ -128,6 +178,7 @@
                   class="btn btn-primary mr-2"
                   data-toggle="modal"
                   data-target="#exampleModal"
+                  onClick={() => setRenderModal(true)}
                 >
                   reivew modal
                 </button>
@@ -136,13 +187,14 @@
                 render
               </button>
             </form>
-            {reviewid && type == 'review' && (
-              <div>
-                <web-review
-                  token={token}
-                  secretkey={secretkey}
-                  reviewid={reviewid}
-                />
+            <div class={type !== 'review' && 'd-none'}>
+              <web-review
+                show-cycle-edge={showcycleedge}
+                token={token}
+                secretkey={secretkey}
+                reviewid={reviewid}
+              />
+              {isRenderModal && (
                 <div
                   class="modal fade"
                   id="exampleModal"
@@ -167,6 +219,7 @@
                       </div>
                       <div class="modal-body">
                         <web-review
+                          show-cycle-edge={showcycleedge}
                           token={token}
                           secretkey={secretkey}
                           reviewid={reviewid}
@@ -175,11 +228,18 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
-            {transitions && type == 'workflow' && (
-              <web-workflow transitions={transitions} />
-            )}
+              )}
+            </div>
+            <div class={type !== 'workflow' && 'd-none'}>
+              <web-workflow
+                transitions={transitions}
+                showcycleedge={showcycleedge}
+                isdraggable="false"
+                on-node-click={() => {
+                  console.log('node click');
+                }}
+              />
+            </div>
           </div>
         );
       }
