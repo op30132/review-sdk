@@ -1,11 +1,12 @@
 import { refineFlow } from '@src/utils/refineflow';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Edge, Node } from 'reactflow';
 import Graph from '@component/Graph';
 import { ReactFlowProvider } from 'reactflow';
 
 const Workflow = (props) => {
+  const ref = useRef(null);
   const transitions = props.transitions ? JSON.parse(props.transitions) : [];
   const isShowCycleEdge = props['showcycleedge']
     ? JSON.parse(props['showcycleedge'])
@@ -22,17 +23,34 @@ const Workflow = (props) => {
   const isDraggable = props['isdraggable']
     ? JSON.parse(props['isdraggable'])
     : true;
-  console.log(props);
-  const onNodeClick = useCallback(() => {
-    return props['onnodeclick'] ?? null;
-  }, []);
 
-  const onNodeDragStart = props['onnodedragstart']
-    ? JSON.parse(props['onnodedragstart'])
-    : null;
-  const onNodeDragStop = props['onnodedragstop']
-    ? JSON.parse(props['onnodedragstop'])
-    : null;
+  const onNodeClick = useCallback((e) => {
+    ref.current.dispatchEvent(
+      new CustomEvent('onNodeClick', {
+        composed: true,
+        bubbles: true,
+        detail: e,
+      }),
+    );
+  }, []);
+  const onNodeDragStart = useCallback((e) => {
+    ref.current.dispatchEvent(
+      new CustomEvent('onNodeDragStart', {
+        composed: true,
+        bubbles: true,
+        detail: e,
+      }),
+    );
+  }, []);
+  const onNodeDragStop = useCallback((e) => {
+    ref.current.dispatchEvent(
+      new CustomEvent('onNodeDragStop', {
+        composed: true,
+        bubbles: true,
+        detail: e,
+      }),
+    );
+  }, []);
 
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
@@ -41,9 +59,10 @@ const Workflow = (props) => {
     setNodes(nodes);
     setEdges(edges);
   };
+
   useEffect(() => {
     if (transitions.length > 0) getGraph();
-  }, [transitions, isShowCycleEdge]);
+  }, [props.transitions, props.isShowCycleEdge]);
 
   return (
     <div className="">
@@ -61,6 +80,7 @@ const Workflow = (props) => {
           onNodeClick={onNodeClick}
           onNodeDragStart={onNodeDragStart}
           onNodeDragStop={onNodeDragStop}
+          ref={ref}
         />
       </ReactFlowProvider>
     </div>
@@ -74,9 +94,6 @@ Workflow.propTypes = {
   mappingedge: PropTypes.array,
   isselectable: PropTypes.string,
   isdraggable: PropTypes.string,
-  onnodeclick: PropTypes.func,
-  onnodedragstart: PropTypes.func,
-  onnodedragstop: PropTypes.func,
 };
 
 export default Workflow;

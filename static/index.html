@@ -62,7 +62,7 @@
         return <div></div>;
       }
       function MyApp() {
-        const { useState } = React;
+        const { useState, useEffect } = React;
         const [type, setType] = useState('review');
         const [reviewid, setReviewid] = useState('');
         const [transitions, setTransitions] = useState('');
@@ -70,6 +70,24 @@
         const [token, setToken] = useState('');
         const [isRenderModal, setRenderModal] = useState(false);
         const [showcycleedge, setShowcycleedge] = useState('false');
+        const workflowRef = React.useRef(null);
+
+        useEffect(() => {
+          workflowRef.current.addEventListener(
+            'onnodeclick',
+            handleOnNodeClick,
+          );
+          return () => {
+            workflowRef.current.removeEventListener(
+              'onnodeclick',
+              handleOnNodeClick,
+            );
+          };
+        }, []);
+
+        const handleOnNodeClick = (event) => {
+          console.log(event);
+        };
 
         const handleOnSubmit = (e) => {
           e.preventDefault();
@@ -189,10 +207,11 @@
             </form>
             <div class={type !== 'review' && 'd-none'}>
               <web-review
-                show-cycle-edge={showcycleedge}
+                showcycleedge={showcycleedge}
                 token={token}
                 secretkey={secretkey}
                 reviewid={reviewid}
+                onnodeclick="onnodeclick"
               />
               {isRenderModal && (
                 <div
@@ -219,7 +238,7 @@
                       </div>
                       <div class="modal-body">
                         <web-review
-                          show-cycle-edge={showcycleedge}
+                          showcycleedge={showcycleedge}
                           token={token}
                           secretkey={secretkey}
                           reviewid={reviewid}
@@ -235,9 +254,7 @@
                 transitions={transitions}
                 showcycleedge={showcycleedge}
                 isdraggable="false"
-                on-node-click={() => {
-                  console.log('node click');
-                }}
+                ref={workflowRef}
               />
             </div>
           </div>

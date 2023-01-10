@@ -1,7 +1,7 @@
 import getSign from '@src/utils/getSign';
-import { refineEdges, refineFlow, refineNodes } from '@src/utils/refineflow';
+import { refineFlow } from '@src/utils/refineflow';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { Edge, Node } from 'reactflow';
 import Graph from '@component/Graph';
 import { dateFormat } from '@src/utils/dateFormat';
@@ -9,6 +9,8 @@ import { ReactFlowProvider } from 'reactflow';
 import { reviewUserStatusMap } from '@src/constant';
 
 const Review = (props) => {
+  const ref = useRef(null);
+
   const isShowCycleEdge = props['showcycleedge']
     ? JSON.parse(props['showcycleedge'])
     : false;
@@ -24,15 +26,6 @@ const Review = (props) => {
   const isDraggable = props['isdraggable']
     ? JSON.parse(props['isdraggable'])
     : false;
-  const onNodeClick = props['onnodeclick']
-    ? JSON.parse(props['onnodeclick'])
-    : null;
-  const onNodeDragStart = props['onnodedragstart']
-    ? JSON.parse(props['onnodedragstart'])
-    : null;
-  const onNodeDragStop = props['onnodedragstop']
-    ? JSON.parse(props['onnodedragstop'])
-    : null;
 
   const reviewId = props.reviewid;
   const secretKey = props.secretkey;
@@ -44,7 +37,7 @@ const Review = (props) => {
   const [edges, setEdges] = useState<Edge[]>([]);
 
   const getGraph = async () => {
-    const { statuses = [], transitions = [] } = currentWorkflow || {};
+    const { transitions = [] } = currentWorkflow || {};
     const { nodes, edges } = refineFlow(transitions, reviewData.status);
     setNodes(nodes);
     setEdges(edges);
@@ -83,6 +76,34 @@ const Review = (props) => {
     if (!currentWorkflow || !reviewData) return;
     getGraph();
   }, [currentWorkflow]);
+
+  const onNodeClick = useCallback((e) => {
+    ref.current.dispatchEvent(
+      new CustomEvent('onNodeClick', {
+        composed: true,
+        bubbles: true,
+        detail: e,
+      }),
+    );
+  }, []);
+  const onNodeDragStart = useCallback((e) => {
+    ref.current.dispatchEvent(
+      new CustomEvent('onNodeDragStart', {
+        composed: true,
+        bubbles: true,
+        detail: e,
+      }),
+    );
+  }, []);
+  const onNodeDragStop = useCallback((e) => {
+    ref.current.dispatchEvent(
+      new CustomEvent('onNodeDragStop', {
+        composed: true,
+        bubbles: true,
+        detail: e,
+      }),
+    );
+  }, []);
   return (
     <div style={{ width: '100%' }}>
       <link
@@ -158,9 +179,6 @@ Review.propTypes = {
   mappingedge: PropTypes.array,
   isselectable: PropTypes.bool,
   isdraggable: PropTypes.bool,
-  onnodeclick: PropTypes.func,
-  onnodedragstart: PropTypes.func,
-  onnodedragstop: PropTypes.func,
 };
 
 export default Review;

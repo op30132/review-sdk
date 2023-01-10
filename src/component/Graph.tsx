@@ -19,16 +19,19 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 const nodeWidth = 200;
 const nodeHeight = 200;
 
-function Graph({
-  nodes,
-  edges,
-  isShowCycleEdge = true,
-  isSelectable = true,
-  isDraggable = true,
-  onNodeClick,
-  onNodeDragStart,
-  onNodeDragStop,
-}) {
+function Graph(
+  {
+    nodes,
+    edges,
+    isShowCycleEdge = true,
+    isSelectable = true,
+    isDraggable = true,
+    onNodeClick,
+    onNodeDragStart,
+    onNodeDragStop,
+  },
+  ref,
+) {
   const reactFlowInstance = useReactFlow();
   const [layoutedNodes, setLayoutedNodes] = useState<Node[]>([]);
   const [layoutedEdges, setLayoutedEdges] = useState<Edge[]>([]);
@@ -103,6 +106,7 @@ function Graph({
     <div style={style}>
       <ReactFlow
         fitView
+        ref={ref}
         attributionPosition="top-right"
         nodes={layoutedNodes}
         onNodesChange={onNodesChange}
@@ -121,4 +125,4 @@ function Graph({
   );
 }
 
-export default Graph;
+export default React.forwardRef(Graph);

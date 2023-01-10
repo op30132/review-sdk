@@ -22968,7 +22968,6 @@
         const f = {}, y = {}, b = {};
         r.props || (r.props = s.propTypes ? Object.keys(s.propTypes) : []);
         const g = Array.isArray(r.props) ? r.props.slice() : Object.keys(r.props), S = Array.isArray(r.props);
-        console.log("r.props", r.props);
         g.forEach((e => {
             f[e] = S ? String : r.props[e], y[e] = P(e), b[y[e]] = e;
         }));
@@ -23015,7 +23014,6 @@
                 Object.keys(this).forEach((function(n) {
                     h[n] !== !1 && (e[n] = this[n]);
                 }), this), l = !0;
-                console.log("this", this);
                 const o = r.shadow ? this.shadowRoot : this, t = a.createElement(s, e);
                 typeof c.createRoot == "function" ? (this[d] || (this[d] = c.createRoot(o)), this[d].render(t)) : c.render(t, o), 
                 l = !1;
@@ -41552,7 +41550,7 @@
         }
     }
     var _$n = lodash_1;
-    var Graph$8 = graphlib_1.Graph;
+    var Graph$9 = graphlib_1.Graph;
     var List = list;
     var greedyFas = greedyFAS$1;
     var DEFAULT_WEIGHT_FN = _$n.constant(1);
@@ -41615,7 +41613,7 @@
         return results;
     }
     function buildState(g, weightFn) {
-        var fasGraph = new Graph$8;
+        var fasGraph = new Graph$9;
         var maxIn = 0;
         var maxOut = 0;
         _$n.forEach(g.nodes(), (function(v) {
@@ -41711,7 +41709,7 @@
         }));
     }
     var _$l = lodash_1;
-    var Graph$7 = graphlib_1.Graph;
+    var Graph$8 = graphlib_1.Graph;
     var util$a = {
         addDummyNode: addDummyNode,
         simplify: simplify$1,
@@ -41738,7 +41736,7 @@
         return v;
     }
     function simplify$1(g) {
-        var simplified = (new Graph$7).setGraph(g.graph());
+        var simplified = (new Graph$8).setGraph(g.graph());
         _$l.forEach(g.nodes(), (function(v) {
             simplified.setNode(v, g.node(v));
         }));
@@ -41756,7 +41754,7 @@
         return simplified;
     }
     function asNonCompoundGraph(g) {
-        var simplified = new Graph$7({
+        var simplified = new Graph$8({
             multigraph: g.isMultigraph()
         }).setGraph(g.graph());
         _$l.forEach(g.nodes(), (function(v) {
@@ -42012,11 +42010,11 @@
         return g.node(e.w).rank - g.node(e.v).rank - g.edge(e).minlen;
     }
     var _$i = lodash_1;
-    var Graph$6 = graphlib_1.Graph;
+    var Graph$7 = graphlib_1.Graph;
     var slack$1 = util$8.slack;
     var feasibleTree_1 = feasibleTree$2;
     function feasibleTree$2(g) {
-        var t = new Graph$6({
+        var t = new Graph$7({
             directed: false
         });
         var start = g.nodes()[0];
@@ -42787,10 +42785,10 @@
         }
     }
     var _$6 = lodash_1;
-    var Graph$5 = graphlib_1.Graph;
+    var Graph$6 = graphlib_1.Graph;
     var buildLayerGraph_1 = buildLayerGraph$1;
     function buildLayerGraph$1(g, rank, relationship) {
-        var root = createRootNode(g), result = new Graph$5({
+        var root = createRootNode(g), result = new Graph$6({
             compound: true
         }).setGraph({
             root: root
@@ -42852,7 +42850,7 @@
     var sortSubgraph = sortSubgraph_1;
     var buildLayerGraph = buildLayerGraph_1;
     var addSubgraphConstraints = addSubgraphConstraints_1;
-    var Graph$4 = graphlib_1.Graph;
+    var Graph$5 = graphlib_1.Graph;
     var util$4 = util$a;
     var order_1 = order$1;
     function order$1(g) {
@@ -42878,7 +42876,7 @@
         }));
     }
     function sweepLayerGraphs(layerGraphs, biasRight) {
-        var cg = new Graph$4;
+        var cg = new Graph$5;
         _$4.forEach(layerGraphs, (function(lg) {
             var root = lg.graph().root;
             var sorted = sortSubgraph(lg, root, cg, biasRight);
@@ -42896,7 +42894,7 @@
         }));
     }
     var _$3 = lodash_1;
-    var Graph$3 = graphlib_1.Graph;
+    var Graph$4 = graphlib_1.Graph;
     var util$3 = util$a;
     var bk = {
         positionX: positionX$1,
@@ -43069,7 +43067,7 @@
         return xs;
     }
     function buildBlockGraph(g, layering, root, reverseSep) {
-        var blockGraph = new Graph$3, graphLabel = g.graph(), sepFn = sep(graphLabel.nodesep, graphLabel.edgesep, reverseSep);
+        var blockGraph = new Graph$4, graphLabel = g.graph(), sepFn = sep(graphLabel.nodesep, graphLabel.edgesep, reverseSep);
         _$3.forEach(layering, (function(layer) {
             var u;
             _$3.forEach(layer, (function(v) {
@@ -43234,7 +43232,7 @@
     var order = order_1;
     var position = position_1;
     var util$1 = util$a;
-    var Graph$2 = graphlib_1.Graph;
+    var Graph$3 = graphlib_1.Graph;
     var layout_1 = layout;
     function layout(g, opts) {
         var time = opts && opts.debugTiming ? util$1.time : util$1.notime;
@@ -43382,7 +43380,7 @@
     };
     var edgeAttrs = [ "labelpos" ];
     function buildLayoutGraph(inputGraph) {
-        var g = new Graph$2({
+        var g = new Graph$3({
             multigraph: true,
             compound: true
         });
@@ -43644,13 +43642,13 @@
     }
     var _ = lodash_1;
     var util = util$a;
-    var Graph$1 = graphlib_1.Graph;
+    var Graph$2 = graphlib_1.Graph;
     var debug = {
         debugOrdering: debugOrdering
     };
     function debugOrdering(g) {
         var layerMatrix = util.buildLayerMatrix(g);
-        var h = new Graph$1({
+        var h = new Graph$2({
             compound: true,
             multigraph: true
         }).setGraph({});
@@ -43718,7 +43716,7 @@
     dagreGraph.setDefaultEdgeLabel((() => ({})));
     const nodeWidth = 200;
     const nodeHeight = 200;
-    function Graph({nodes: nodes, edges: edges, isShowCycleEdge: isShowCycleEdge = true, isSelectable: isSelectable = true, isDraggable: isDraggable = true, onNodeClick: onNodeClick, onNodeDragStart: onNodeDragStart, onNodeDragStop: onNodeDragStop}) {
+    function Graph({nodes: nodes, edges: edges, isShowCycleEdge: isShowCycleEdge = true, isSelectable: isSelectable = true, isDraggable: isDraggable = true, onNodeClick: onNodeClick, onNodeDragStart: onNodeDragStart, onNodeDragStop: onNodeDragStop}, ref) {
         useReactFlow();
         const [layoutedNodes, setLayoutedNodes] = reactExports.useState([]);
         const [layoutedEdges, setLayoutedEdges] = reactExports.useState([]);
@@ -43785,6 +43783,7 @@
         }, {
             children: jsxRuntimeExports.jsx(ReactFlow, Object.assign({
                 fitView: true,
+                ref: ref,
                 attributionPosition: "top-right",
                 nodes: layoutedNodes,
                 onNodesChange: onNodesChange,
@@ -43801,6 +43800,7 @@
             }))
         }));
     }
+    var Graph$1 = React.forwardRef(Graph);
     const dateFormat = date => {
         const td = date.toISOString().split("T")[0];
         const t = date.toTimeString().split(" ")[0];
@@ -43818,13 +43818,13 @@
         [reviewUserStatus.fail]: "審核不通過"
     };
     const Review = props => {
-        var _a, _b;
+        var _a, _b, _c;
         const isShowCycleEdge = props["showcycleedge"] ? JSON.parse(props["showcycleedge"]) : false;
         props["mappingstatus"] ? JSON.parse(props["mappingstatus"]) : [];
         props["mappingedge"] ? JSON.parse(props["mappingedge"]) : [];
         const isSelectable = props["isselectable"] ? JSON.parse(props["isselectable"]) : false;
         const isDraggable = props["isdraggable"] ? JSON.parse(props["isdraggable"]) : false;
-        const onNodeClick = props["onnodeclick"] ? JSON.parse(props["onnodeclick"]) : null;
+        const onNodeClick = (_a = props["onnodeclick"]) !== null && _a !== void 0 ? _a : null;
         const onNodeDragStart = props["onnodedragstart"] ? JSON.parse(props["onnodedragstart"]) : null;
         const onNodeDragStop = props["onnodedragstop"] ? JSON.parse(props["onnodedragstop"]) : null;
         const reviewId = props.reviewid;
@@ -43835,7 +43835,7 @@
         const [nodes, setNodes] = reactExports.useState([]);
         const [edges, setEdges] = reactExports.useState([]);
         const getGraph = () => __awaiter(void 0, void 0, void 0, (function*() {
-            const {statuses: statuses = [], transitions: transitions = []} = currentWorkflow || {};
+            const {transitions: transitions = []} = currentWorkflow || {};
             const {nodes: nodes, edges: edges} = refineFlow(transitions, reviewData.status);
             setNodes(nodes);
             setEdges(edges);
@@ -43889,7 +43889,7 @@
                         }, {
                             children: reviewData === null || reviewData === void 0 ? void 0 : reviewData.status
                         })), nodes.length && edges.length && jsxRuntimeExports.jsx(ReactFlowProvider, {
-                            children: jsxRuntimeExports.jsx(Graph, {
+                            children: jsxRuntimeExports.jsx(Graph$1, {
                                 nodes: nodes,
                                 edges: edges,
                                 isShowCycleEdge: isShowCycleEdge,
@@ -43905,7 +43905,7 @@
                     })), jsxRuntimeExports.jsx("div", Object.assign({
                         className: "flex-none w-1/4 flex flex-col divide-y divide-slate-700"
                     }, {
-                        children: ((_a = reviewData === null || reviewData === void 0 ? void 0 : reviewData.timelines) === null || _a === void 0 ? void 0 : _a.length) && ((_b = reviewData === null || reviewData === void 0 ? void 0 : reviewData.timelines) === null || _b === void 0 ? void 0 : _b.map((({id: id, reviewUser: reviewUser, statusFrom: statusFrom, statusTo: statusTo, reviewUserStatus: reviewUserStatus, createdAt: createdAt}) => {
+                        children: ((_b = reviewData === null || reviewData === void 0 ? void 0 : reviewData.timelines) === null || _b === void 0 ? void 0 : _b.length) && ((_c = reviewData === null || reviewData === void 0 ? void 0 : reviewData.timelines) === null || _c === void 0 ? void 0 : _c.map((({id: id, reviewUser: reviewUser, statusFrom: statusFrom, statusTo: statusTo, reviewUserStatus: reviewUserStatus, createdAt: createdAt}) => {
                             var _a;
                             return jsxRuntimeExports.jsxs("div", Object.assign({
                                 className: "p-2 text-sm"
@@ -43932,19 +43932,34 @@
         onnodedragstop: propTypesExports.func
     };
     const Workflow = props => {
+        const ref = reactExports.useRef(null);
         const transitions = props.transitions ? JSON.parse(props.transitions) : [];
         const isShowCycleEdge = props["showcycleedge"] ? JSON.parse(props["showcycleedge"]) : true;
         props["mappingstatus"] ? JSON.parse(props["mappingstatus"]) : [];
         props["mappingedge"] ? JSON.parse(props["mappingedge"]) : [];
         const isSelectable = props["isselectable"] ? JSON.parse(props["isselectable"]) : true;
         const isDraggable = props["isdraggable"] ? JSON.parse(props["isdraggable"]) : true;
-        console.log(props);
-        const onNodeClick = reactExports.useCallback((() => {
-            var _a;
-            return (_a = props["onnodeclick"]) !== null && _a !== void 0 ? _a : null;
+        const onNodeClick = reactExports.useCallback((e => {
+            ref.current.dispatchEvent(new CustomEvent("onNodeClick", {
+                composed: true,
+                bubbles: true,
+                detail: e
+            }));
         }), []);
-        const onNodeDragStart = props["onnodedragstart"] ? JSON.parse(props["onnodedragstart"]) : null;
-        const onNodeDragStop = props["onnodedragstop"] ? JSON.parse(props["onnodedragstop"]) : null;
+        const onNodeDragStart = reactExports.useCallback((e => {
+            ref.current.dispatchEvent(new CustomEvent("onNodeDragStart", {
+                composed: true,
+                bubbles: true,
+                detail: e
+            }));
+        }), []);
+        const onNodeDragStop = reactExports.useCallback((e => {
+            ref.current.dispatchEvent(new CustomEvent("onNodeDragStop", {
+                composed: true,
+                bubbles: true,
+                detail: e
+            }));
+        }), []);
         const [nodes, setNodes] = reactExports.useState([]);
         const [edges, setEdges] = reactExports.useState([]);
         const getGraph = () => __awaiter(void 0, void 0, void 0, (function*() {
@@ -43954,7 +43969,7 @@
         }));
         reactExports.useEffect((() => {
             if (transitions.length > 0) getGraph();
-        }), [ transitions, isShowCycleEdge ]);
+        }), [ props.transitions, props.isShowCycleEdge ]);
         return jsxRuntimeExports.jsxs("div", Object.assign({
             className: ""
         }, {
@@ -43962,7 +43977,7 @@
                 rel: "stylesheet",
                 href: "https://img.jkos.com.tw/reactflow/style/reactflow.css"
             }), jsxRuntimeExports.jsx(ReactFlowProvider, {
-                children: jsxRuntimeExports.jsx(Graph, {
+                children: jsxRuntimeExports.jsx(Graph$1, {
                     nodes: nodes,
                     edges: edges,
                     isShowCycleEdge: isShowCycleEdge,
@@ -43970,7 +43985,8 @@
                     isDraggable: isDraggable,
                     onNodeClick: onNodeClick,
                     onNodeDragStart: onNodeDragStart,
-                    onNodeDragStop: onNodeDragStop
+                    onNodeDragStop: onNodeDragStop,
+                    ref: ref
                 })
             }) ]
         }));
@@ -43981,10 +43997,7 @@
         mappingstatus: propTypesExports.array,
         mappingedge: propTypesExports.array,
         isselectable: propTypesExports.string,
-        isdraggable: propTypesExports.string,
-        onnodeclick: propTypesExports.func,
-        onnodedragstart: propTypesExports.func,
-        onnodedragstop: propTypesExports.func
+        isdraggable: propTypesExports.string
     };
     const WebReview = w(Review, React, client, {
         shadow: "open"
